@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Violet Lens — Professional Digital Image Forensics Workstation for file integrity, EXIF inspection, Error Level Analysis, and radiometric pixel verification.">
+    <title>Violet Lens — Digital Image Forensics Workstation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/print.css') }}" media="print">
+</head>
+<body>
+    <div class="app-layout">
+        <!-- DESKTOP AUBERGINE SIDEBAR -->
+        <aside class="sidebar" id="appSidebar">
+            <div class="sidebar-brand">
+                <div class="brand-symbol">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        <path d="M11 8v6M8 11h6"></path>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-title">VIOLET LENS</span>
+                    <span class="brand-sub">Forensics Workstation</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav" aria-label="Main Navigation">
+                <button type="button" class="nav-item active" id="navWorkspaceBtn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="3" y1="9" x2="21" y2="9"></line>
+                        <line x1="9" y1="21" x2="9" y2="9"></line>
+                    </svg>
+                    <span>Workspace</span>
+                </button>
+                <button type="button" class="nav-item" id="navMethodologyBtn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                    <span>Methodology</span>
+                </button>
+                <button type="button" class="nav-item" id="navAboutBtn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    <span>About Project</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Local Engine &bull; Offline Safe</span>
+                </div>
+                <div class="version-meta">
+                    <span>Version 1.0.0</span>
+                    <span class="tag-badge">CSDF Mini-Project</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN VIEW CONTAINER -->
+        <main class="main-content" id="mainContent">
+            <!-- TOP APP HEADER -->
+            <header class="top-header">
+                <div class="header-left">
+                    <button type="button" class="mobile-toggle-btn" id="mobileMenuToggle" aria-label="Toggle navigation">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                    <div class="header-breadcrumb">
+                        <span class="crumb-root">Workstation</span>
+                        <span class="crumb-sep">/</span>
+                        <span class="crumb-current" id="currentSectionTitle">Evidence Examination</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="badge-integrity" title="Cryptographic verification active">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                        <span>Chain-of-Custody Protected</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="workspace-body">
+                <!-- WORKSPACE INTRO TITLE -->
+                <section class="workspace-heading-section">
+                    <h1 class="main-page-title">Image Forensics Workspace</h1>
+                    <p class="main-page-subtitle">
+                        Examine image properties, inspect available metadata, verify file integrity, and review pixel-level indicators in one focused workspace.
+                    </p>
+                </section>
+
+                <!-- EVIDENCE UPLOAD PANEL -->
+                <section class="card upload-card" id="uploadSection">
+                    <div class="card-header">
+                        <div class="header-title-group">
+                            <h2 class="card-title">Add an image for examination</h2>
+                            <p class="card-subtitle">Select an image from your device or drag it into this area.</p>
+                        </div>
+                        <span class="card-badge">Step 1: Ingestion</span>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="drop-zone" id="dropZone" tabindex="0" role="button" aria-label="Drop zone for image evidence">
+                            <input type="file" id="evidenceFileInput" class="file-input-hidden" accept=".jpg,.jpeg,.png,.webp,.bmp,.tiff,.tif">
+                            <div class="drop-zone-content">
+                                <div class="drop-icon-wrap">
+                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="17 8 12 3 7 8"></polyline>
+                                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                                    </svg>
+                                </div>
+                                <h3 class="drop-prompt">Drag and drop evidence image here</h3>
+                                <p class="drop-hint">or <button type="button" class="btn-text-link" id="browseFilesBtn">browse your device</button></p>
+                                <div class="format-chips">
+                                    <span class="format-chip">JPEG / JPG</span>
+                                    <span class="format-chip">PNG</span>
+                                    <span class="format-chip">WEBP</span>
+                                    <span class="format-chip">BMP</span>
+                                    <span class="format-chip">TIFF</span>
+                                    <span class="format-chip chip-limit">Max 15 MB</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- STAGED EVIDENCE INFO (SHOWN WHEN FILE SELECTED) -->
+                        <div class="staged-file-card" id="stagedFileBox" style="display: none;">
+                            <div class="staged-details">
+                                <div class="file-icon-box">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                        <polyline points="21 15 16 10 5 21"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="staged-meta">
+                                    <div class="staged-name" id="stagedFileName">sample.jpg</div>
+                                    <div class="staged-size" id="stagedFileSize">0 KB</div>
+                                </div>
+                            </div>
+                            <div class="staged-actions">
+                                <button type="button" class="btn btn-outline" id="clearSelectionBtn">Remove</button>
+                                <button type="button" class="btn btn-primary" id="analyzeEvidenceBtn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="11" cy="11" r="8"></circle>
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                    </svg>
+                                    <span>Analyze Image</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- PROCESSING / LOADING SPINNER -->
+                        <div class="processing-state" id="processingState" style="display: none;">
+                            <div class="spinner-ring"></div>
+                            <h4 class="processing-title">Executing Forensic Examination Pipeline</h4>
+                            <p class="processing-sub" id="processingStatusText">Hashing byte sequence, verifying file signature, parsing EXIF tags, and computing error levels...</p>
+                        </div>
+
+                        <!-- ERROR ALERT BOX -->
+                        <div class="alert-banner alert-error" id="uploadErrorAlert" style="display: none;" role="alert">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                            <div class="alert-content">
+                                <strong id="alertErrorTitle">Validation Error</strong>
+                                <span id="alertErrorDesc">The uploaded file could not be verified.</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- EMPTY STATE (SHOWN BEFORE EXAMINATION) -->
+                <section class="card empty-state-card" id="emptyStateSection">
+                    <div class="empty-header">
+                        <h2>Forensic Analysis Capabilities</h2>
+                        <p>Upload a digital image above to execute the deterministic forensic inspection engines:</p>
+                    </div>
+                    <div class="capabilities-grid">
+                        <div class="capability-box">
+                            <div class="cap-num">01</div>
+                            <h3>File Integrity & Hashing</h3>
+                            <p>Computes the SHA-256 cryptographic digest directly from raw uploaded bytes to establish evidence chain-of-custody.</p>
+                        </div>
+                        <div class="capability-box">
+                            <div class="cap-num">02</div>
+                            <h3>File Signature Consistency</h3>
+                            <p>Validates file binary magic bytes against claimed extensions (JPEG, PNG, WebP, BMP, TIFF) to detect extension spoofing.</p>
+                        </div>
+                        <div class="capability-box">
+                            <div class="cap-num">03</div>
+                            <h3>EXIF & Structural Metadata</h3>
+                            <p>Extracts camera hardware, editing software tags, capture timestamps, optical settings, and privacy-shielded GPS geolocation.</p>
+                        </div>
+                        <div class="capability-box">
+                            <div class="cap-num">04</div>
+                            <h3>Error Level Analysis (ELA)</h3>
+                            <p>Resaves JPEG evidence under documented compression (Q=90) to visualize compression variance across 8x8 DCT grids.</p>
+                        </div>
+                        <div class="capability-box">
+                            <div class="cap-num">05</div>
+                            <h3>Radiometric Pixel Histograms</h3>
+                            <p>Computes 256-level RGB and Luminance distributions, dynamic range, Shannon entropy, and shadow/highlight clipping.</p>
+                        </div>
+                        <div class="capability-box">
+                            <div class="cap-num">06</div>
+                            <h3>Forensic Findings Synthesis</h3>
+                            <p>Constructs deterministic, evidence-based observations categorized into empirical findings, review leads, and scientific limitations.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ACTIVE EXAMINATION RESULTS (HIDDEN UNTIL ANALYSIS COMPLETES) -->
+                <div class="examination-results-container" id="resultsContainer" style="display: none;">
+                    
+                    <!-- TOP RESULTS ACTION BAR -->
+                    <div class="results-action-bar">
+                        <div class="results-meta-pill">
+                            <span class="meta-label">Examination ID:</span>
+                            <span class="meta-value" id="resExamIdDisplay">--</span>
+                        </div>
+                        <div class="results-meta-pill">
+                            <span class="meta-label">Timestamp:</span>
+                            <span class="meta-value" id="resExamTimestamp">--</span>
+                        </div>
+                        <div class="results-actions">
+                            <button type="button" class="btn btn-outline" id="newExaminationBtn">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 5v14M5 12h14"></path>
+                                </svg>
+                                <span>New Examination</span>
+                            </button>
+                            <a href="#" class="btn btn-outline" id="downloadJsonBtn" download>
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                <span>Download JSON</span>
+                            </a>
+                            <a href="#" class="btn btn-primary" id="printReportBtn" target="_blank">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                                    <rect x="6" y="14" width="12" height="8"></rect>
+                                </svg>
+                                <span>Export Examination Report</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 1: FILE INTEGRITY -->
+                    <section class="card result-card" id="integritySection">
+                        <div class="card-header">
+                            <div class="header-title-group">
+                                <h2 class="card-title">File Integrity & Cryptographic Identity</h2>
+                                <p class="card-subtitle">Bit-level verification calculated directly from the unaltered evidence byte stream.</p>
+                            </div>
+                            <span class="badge-status-verified" id="integrityVerifiedBadge">VERIFIED ORIGINAL BYTES</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="sha-box">
+                                <div class="sha-header">
+                                    <span class="sha-label">SHA-256 Cryptographic Hash (Bit-for-Bit Fingerprint)</span>
+                                    <button type="button" class="btn btn-sm btn-outline copy-btn" id="copyShaBtn" title="Copy SHA-256 hash to clipboard">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                        </svg>
+                                        <span id="copyShaBtnText">Copy Hash</span>
+                                    </button>
+                                </div>
+                                <div class="sha-value" id="resSha256Value">--</div>
+                            </div>
+
+                            <div class="grid-2-cols integrity-meta-grid">
+                                <div class="meta-item">
+                                    <span class="meta-k">Original File Name</span>
+                                    <span class="meta-v mono" id="resOriginalFilename">--</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-k">Byte Size (Unaltered)</span>
+                                    <span class="meta-v" id="resByteSize">--</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-k">Binary Header Magic Bytes</span>
+                                    <span class="meta-v mono" id="resMagicBytes">--</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-k">Extension / Header Consistency</span>
+                                    <span class="meta-v" id="resExtensionConsistency">--</span>
+                                </div>
+                            </div>
+
+                            <p class="section-explanation" id="resIntegrityExplanation">
+                                SHA-256 computes a deterministic cryptographic digest of the exact original byte stream. Any alteration of even a single bit in the file completely alters this checksum.
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- SECTION 2: DUAL IMAGE & ELA WORKSPACE -->
+                    <section class="card result-card" id="dualImageSection">
+                        <div class="card-header">
+                            <div class="header-title-group">
+                                <h2 class="card-title">Image Inspection & Error Level Analysis (ELA)</h2>
+                                <p class="card-subtitle">Examine original visual evidence alongside amplified compression error levels.</p>
+                            </div>
+                            <div class="view-mode-toggles" role="tablist">
+                                <button type="button" class="tab-btn active" id="viewSideBySideBtn" role="tab">Side-by-Side</button>
+                                <button type="button" class="tab-btn" id="viewOriginalBtn" role="tab">Original Only</button>
+                                <button type="button" class="tab-btn" id="viewElaBtn" role="tab">ELA Only</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="dual-viewport-grid" id="dualViewportGrid">
+                                <!-- ORIGINAL EVIDENCE VIEWPORT -->
+                                <div class="viewport-box" id="originalViewportBox">
+                                    <div class="viewport-header">
+                                        <span class="viewport-title">Original Evidence Preview</span>
+                                        <span class="viewport-badge" id="originalFormatBadge">RGB</span>
+                                    </div>
+                                    <div class="viewport-stage transparency-checkered">
+                                        <img id="originalEvidenceImg" src="" alt="Original evidence preview">
+                                    </div>
+                                    <div class="viewport-caption">Decoded from original upload without altering source bytes.</div>
+                                </div>
+
+                                <!-- ELA VIEWPORT -->
+                                <div class="viewport-box" id="elaViewportBox">
+                                    <div class="viewport-header">
+                                        <span class="viewport-title">Error Level Analysis (ELA)</span>
+                                        <span class="viewport-badge badge-accent" id="elaSettingsBadge">Q=90 &bull; 15×</span>
+                                    </div>
+                                    <div class="viewport-stage transparency-checkered" id="elaStage">
+                                        <img id="elaResultImg" src="" alt="Error Level Analysis visualization" style="display: none;">
+                                        <!-- UNAVAILABLE STATE (NON-JPEG) -->
+                                        <div class="ela-unavailable-state" id="elaUnavailableBox" style="display: none;">
+                                            <div class="info-icon-circle">
+                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <circle cx="12" cy="12" r="10"></circle>
+                                                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                                                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                                </svg>
+                                            </div>
+                                            <h4>ELA Not Applicable For This Format</h4>
+                                            <p id="elaUnavailableReason">Error Level Analysis operates specifically on lossy JPEG 8x8 block compression artifacts.</p>
+                                        </div>
+                                    </div>
+                                    <div class="viewport-caption" id="elaCaption">Amplified difference between original pixels and a 90% recompressed JPEG copy.</div>
+                                </div>
+                            </div>
+
+                            <!-- ELA METRICS STATS BAR (WHEN AVAILABLE) -->
+                            <div class="ela-metrics-bar" id="elaMetricsBar" style="display: none;">
+                                <div class="ela-metric">
+                                    <span class="ela-m-label">Mean Recompression Error</span>
+                                    <span class="ela-m-val" id="elaMeanErrorVal">--</span>
+                                </div>
+                                <div class="ela-metric">
+                                    <span class="ela-m-label">Peak Absolute Error</span>
+                                    <span class="ela-m-val" id="elaMaxErrorVal">--</span>
+                                </div>
+                                <div class="ela-metric">
+                                    <span class="ela-m-label">Error Standard Dev</span>
+                                    <span class="ela-m-val" id="elaStdErrorVal">--</span>
+                                </div>
+                                <div class="ela-metric">
+                                    <span class="ela-m-label">High-Error Pixels (>10 levels)</span>
+                                    <span class="ela-m-val" id="elaHighErrorVal">--</span>
+                                </div>
+                            </div>
+
+                            <p class="section-explanation" id="elaScientificNote">
+                                Interpretation note: ELA is an investigative heuristic that highlights variance in JPEG compression error. It does not generate a binary 'tampered' score. Bright edges naturally occur along sharp boundaries; review localized discontinuities against surrounding textures.
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- SECTION 3: IMAGE PROPERTIES -->
+                    <section class="card result-card" id="propertiesSection">
+                        <div class="card-header">
+                            <div class="header-title-group">
+                                <h2 class="card-title">Image Technical Properties</h2>
+                                <p class="card-subtitle">Structural dimensions, raster format specifications, and color space encoding.</p>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="forensic-table" id="propertiesTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Property</th>
+                                            <th>Observed Value</th>
+                                            <th>Forensic Significance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="propertiesTableBody">
+                                        <!-- Populated via JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- SECTION 4: METADATA & EXIF EXAMINATION -->
+                    <section class="card result-card" id="metadataSection">
+                        <div class="card-header">
+                            <div class="header-title-group">
+                                <h2 class="card-title">Metadata & EXIF Examination</h2>
+                                <p class="card-subtitle">Inspection of hardware tags, editing software fingerprints, timestamps, and geolocation.</p>
+                            </div>
+                            <span class="tag-badge" id="metadataCountBadge">0 Tags Found</span>
+                        </div>
+                        <div class="card-body">
+                            <!-- METADATA TABS -->
+                            <div class="metadata-subtabs">
+                                <button type="button" class="subtab-btn active" id="metaTabSummaryBtn">Key Evidence Summary</button>
+                                <button type="button" class="subtab-btn" id="metaTabGpsBtn">Geolocation (GPS)</button>
+                                <button type="button" class="subtab-btn" id="metaTabAllTagsBtn">Comprehensive Tag Table</button>
+                            </div>
+
+                            <!-- PANE 1: SUMMARY -->
+                            <div class="meta-pane active" id="metaPaneSummary">
+                                <div class="grid-2-cols metadata-cards-grid">
+                                    <div class="meta-group-box">
+                                        <h4 class="group-title">Camera & Capture Device</h4>
+                                        <div class="kv-list" id="metaCameraList">
+                                            <div class="kv-row"><span class="k">Make:</span><span class="v" id="resMetaMake">Not Present</span></div>
+                                            <div class="kv-row"><span class="k">Model:</span><span class="v" id="resMetaModel">Not Present</span></div>
+                                            <div class="kv-row"><span class="k">Lens:</span><span class="v" id="resMetaLens">Not Present</span></div>
+                                            <div class="kv-row"><span class="k">Software / Host:</span><span class="v" id="resMetaSoftware">Not Present</span></div>
+                                        </div>
+                                    </div>
+                                    <div class="meta-group-box">
+                                        <h4 class="group-title">Timestamps & Capture Chronology</h4>
+                                        <div class="kv-list" id="metaTimeList">
+                                            <div class="kv-row"><span class="k">Original Date/Time:</span><span class="v mono" id="resMetaTimeOrig">Not Present</span></div>
+                                            <div class="kv-row"><span class="k">Digitized Date/Time:</span><span class="v mono" id="resMetaTimeDig">Not Present</span></div>
+                                            <div class="kv-row"><span class="k">Modification Date:</span><span class="v mono" id="resMetaTimeMod">Not Present</span></div>
+                                            <div class="kv-row"><span class="k">Chronology Consistency:</span><span class="v" id="resMetaTimeStatus">Not Applicable</span></div>
+                                        </div>
+                                    </div>
+                                    <div class="meta-group-box">
+                                        <h4 class="group-title">Optical & Exposure Settings</h4>
+                                        <div class="kv-list" id="metaOpticsList">
+                                            <div class="kv-row"><span class="k">Exposure / Shutter:</span><span class="v" id="resMetaExp">Not Present</span></div>
+                                            <div class="kv-row"><span class="k">Aperture (F-Stop):</span><span class="v" id="resMetaAperture">Not Present</span></div>
+                                            <div class="kv-row"><span class="k">ISO Sensitivity:</span><span class="v" id="resMetaIso">Not Present</span></div>
+                                            <div class="kv-row"><span class="k">Focal Length:</span><span class="v" id="resMetaFocal">Not Present</span></div>
+                                            <div class="kv-row"><span class="k">Flash:</span><span class="v" id="resMetaFlash">Not Present</span></div>
+                                        </div>
+                                    </div>
+                                    <div class="meta-group-box">
+                                        <h4 class="group-title">Location Status</h4>
+                                        <div class="kv-list">
+                                            <div class="kv-row"><span class="k">GPS Geolocation:</span><span class="v" id="resMetaGpsPresence">Not Present</span></div>
+                                            <div class="kv-row"><span class="k">Privacy Policy:</span><span class="v">Masked until locally revealed</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- PANE 2: GPS SENSITIVE DISCLOSURE -->
+                            <div class="meta-pane" id="metaPaneGps" style="display: none;">
+                                <div class="gps-privacy-card">
+                                    <div class="gps-status-header">
+                                        <div class="gps-icon-box">
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"></path>
+                                                <circle cx="12" cy="10" r="3"></circle>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h4 class="gps-heading">Geolocation Evidence Protection</h4>
+                                            <p class="gps-sub" id="gpsStatusSubText">Location metadata presence status.</p>
+                                        </div>
+                                    </div>
+
+                                    <div id="gpsDataContainer" style="display: none;">
+                                        <div class="coordinates-shielded" id="gpsShieldedState">
+                                            <p>Coordinates are detected in this image. To protect privacy during presentations or reviews, coordinates are masked.</p>
+                                            <button type="button" class="btn btn-outline" id="revealCoordinatesBtn">
+                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                    <circle cx="12" cy="12" r="3"></circle>
+                                                </svg>
+                                                <span>Reveal Coordinates Locally</span>
+                                            </button>
+                                        </div>
+                                        <div class="coordinates-revealed" id="gpsRevealedState" style="display: none;">
+                                            <div class="coord-display-box">
+                                                <span class="coord-label">Decoded Coordinates:</span>
+                                                <span class="coord-value mono" id="revealedCoordsText">--</span>
+                                                <span class="coord-alt" id="revealedAltText"></span>
+                                            </div>
+                                            <div class="coord-actions">
+                                                <button type="button" class="btn btn-sm btn-outline" id="hideCoordinatesBtn">Mask Coordinates</button>
+                                                <a href="#" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-primary" id="openMapLink">
+                                                    <span>Open in External Map</span>
+                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                                        <polyline points="15 3 21 3 21 9"></polyline>
+                                                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                                                    </svg>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div id="gpsAbsentContainer">
+                                        <p class="text-secondary">No GPS geolocation coordinates were found embedded within this image.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- PANE 3: ALL RAW TAGS TABLE -->
+                            <div class="meta-pane" id="metaPaneAllTags" style="display: none;">
+                                <div class="table-search-bar">
+                                    <input type="text" id="metaSearchInput" class="form-input" placeholder="Filter EXIF tags (e.g. Model, Software, Date, Flash)...">
+                                </div>
+                                <div class="table-responsive table-scroll-y">
+                                    <table class="forensic-table" id="allTagsTable">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 35%;">EXIF Tag Name</th>
+                                                <th>Decoded Value</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="allTagsTableBody">
+                                            <!-- Dynamically populated -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <p class="section-explanation" id="resMetaExplanation">
+                                EXIF metadata is an observational artifact; presence or absence alone does not constitute proof of manipulation.
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- SECTION 5: PIXEL & COLOR HISTOGRAMS -->
+                    <section class="card result-card" id="pixelSection">
+                        <div class="card-header">
+                            <div class="header-title-group">
+                                <h2 class="card-title">Pixel & Radiometric Color Analysis</h2>
+                                <p class="card-subtitle">256-level intensity distributions, clipping metrics, and Shannon information entropy.</p>
+                            </div>
+                            <div class="channel-toggles">
+                                <button type="button" class="channel-btn active" data-channel="all">Composite</button>
+                                <button type="button" class="channel-btn" data-channel="red">Red</button>
+                                <button type="button" class="channel-btn" data-channel="green">Green</button>
+                                <button type="button" class="channel-btn" data-channel="blue">Blue</button>
+                                <button type="button" class="channel-btn" data-channel="luminance">Luminance</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <!-- HTML5 CANVAS HISTOGRAM CHART -->
+                            <div class="canvas-chart-container">
+                                <canvas id="histogramCanvas" width="900" height="280"></canvas>
+                            </div>
+                            <div class="chart-legend">
+                                <span class="legend-item"><span class="legend-dot dot-red"></span> Red Channel</span>
+                                <span class="legend-item"><span class="legend-dot dot-green"></span> Green Channel</span>
+                                <span class="legend-item"><span class="legend-dot dot-blue"></span> Blue Channel</span>
+                                <span class="legend-item"><span class="legend-dot dot-lum"></span> Luminance (BT.601)</span>
+                            </div>
+
+                            <!-- STATISTICAL SUMMARY TABLE -->
+                            <div class="table-responsive" style="margin-top: 1.5rem;">
+                                <table class="forensic-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Channel</th>
+                                            <th>Mean</th>
+                                            <th>Std Dev</th>
+                                            <th>Min / Max</th>
+                                            <th>Shadow Clip (0)</th>
+                                            <th>Highlight Clip (255)</th>
+                                            <th>Shannon Entropy</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pixelStatsTableBody">
+                                        <!-- Dynamically populated -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <p class="section-explanation">
+                                Histograms display the radiometric distribution of pixel intensities across 256 levels. Unusual peaks, unnatural comb gaps from contrast stretching, or severe clipping provide clues regarding exposure levels and dynamic range compression.
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- SECTION 6: FORENSIC OBSERVATIONS -->
+                    <section class="card result-card" id="observationsSection">
+                        <div class="card-header">
+                            <div class="header-title-group">
+                                <h2 class="card-title">Examination Findings & Observations</h2>
+                                <p class="card-subtitle">Deterministic indicators synthesized from all completed tests, categorized by investigative priority.</p>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="observations-list" id="observationsList">
+                                <!-- Populated dynamically with Info, Review, Limitation cards -->
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- EXPORT ACTIONS BAR -->
+                    <div class="bottom-export-card">
+                        <div class="export-left">
+                            <h3>Examination Record Ready for Archival</h3>
+                            <p>Export verifiable JSON report or print a formal examination dossier.</p>
+                        </div>
+                        <div class="export-right">
+                            <a href="#" class="btn btn-outline" id="bottomDownloadJsonBtn" download>Download JSON Report</a>
+                            <a href="#" class="btn btn-primary" id="bottomPrintReportBtn" target="_blank">Print Examination Dossier</a>
+                        </div>
+                    </div>
+
+                </div><!-- /examination-results-container -->
+
+            </div><!-- /workspace-body -->
+
+            <!-- COMPACT FOOTER -->
+            <footer class="app-footer">
+                <div class="footer-left">
+                    <span>Violet Lens &bull; Version 1.0.0 &bull; Computer Engineering CSDF Mini-Project</span>
+                </div>
+                <div class="footer-right">
+                    <span>Important: Forensic indicators provide investigative leads and empirical metrics rather than definitive proof of manipulation.</span>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <!-- MODAL: METHODOLOGY -->
+    <div class="modal-backdrop" id="methodologyModal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="modalMethodologyTitle">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalMethodologyTitle">Digital Forensics Methodology & Scientific Foundations</h3>
+                <button type="button" class="modal-close-btn" id="closeMethodologyModalBtn" aria-label="Close dialog">&times;</button>
+            </div>
+            <div class="modal-body">
+                <article class="modal-article">
+                    <h4>1. Cryptographic File Hashing (SHA-256)</h4>
+                    <p>
+                        Cryptographic hashing applies a deterministic mathematical algorithm to compute a fixed 256-bit digest directly from the exact binary byte stream of evidence. In forensic chain of custody, the hash proves bit-for-bit file integrity from the moment of ingestion. It identifies the file; it does not independently prove real-world authenticity.
+                    </p>
+
+                    <h4>2. File Signature & Header Verification</h4>
+                    <p>
+                        Operating systems often rely on file extensions (.jpg, .png), which are trivial to alter. Digital forensics inspects initial "magic bytes" (e.g. <code>FF D8 FF</code> for JPEG, <code>89 50 4E 47</code> for PNG) to detect extension spoofing and file format discrepancies.
+                    </p>
+
+                    <h4>3. EXIF & Metadata Extraction</h4>
+                    <p>
+                        Exchangeable Image File Format (EXIF) metadata stores camera parameters (Make, Model, Exposure, F-Stop, ISO, Focal Length), capture dates, software processing tags, and geolocation coordinates. Because metadata can be modified or stripped by web services, absence of EXIF does not prove tampering, while presence of editing software indicates modification.
+                    </p>
+
+                    <h4>4. Error Level Analysis (ELA)</h4>
+                    <p>
+                        Error Level Analysis applies a known JPEG recompression pass (Quality 90) against an uncompressed representation of the image and calculates absolute pixel differences, amplified for human review. Regions of an image that have been resaved multiple times or spliced from images with different compression histories often exhibit differing error rates. High-contrast edges naturally exhibit higher error. ELA is an investigative heuristic, not an automated proof of forgery.
+                    </p>
+
+                    <h4>5. Radiometric Pixel Distribution & Shannon Entropy</h4>
+                    <p>
+                        NumPy calculates channel histograms across 256 intensity levels. Shannon entropy measures visual information density and randomness. Dynamic range clipping identifies loss of shadow or highlight detail.
+                    </p>
+
+                    <h4>6. Evaluative Framework</h4>
+                    <p>
+                        Violet Lens strictly rejects fabricated "tampering percentages." Digital forensics requires contextual corroboration between physical evidence (metadata, headers), compression characteristics (ELA), and radiometric properties (histograms).
+                    </p>
+                </article>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="dismissMethodologyBtn">Close Methodology</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ABOUT PROJECT -->
+    <div class="modal-backdrop" id="aboutModal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="modalAboutTitle">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalAboutTitle">About Violet Lens</h3>
+                <button type="button" class="modal-close-btn" id="closeAboutModalBtn" aria-label="Close dialog">&times;</button>
+            </div>
+            <div class="modal-body">
+                <article class="modal-article">
+                    <div class="about-hero-box">
+                        <h4>Design and develop a tool for digital forensic of images</h4>
+                        <p class="about-syllabus-note">Computer Engineering CSDF (Cyber Security and Digital Forensics) Mini-Project</p>
+                    </div>
+
+                    <div class="about-grid">
+                        <div class="about-card">
+                            <h5>Application Name</h5>
+                            <p>Violet Lens — Digital Image Forensics Workstation</p>
+                        </div>
+                        <div class="about-card">
+                            <h5>Version & Environment</h5>
+                            <p>Version 1.0.0 &bull; Purely Local / Offline Execution</p>
+                        </div>
+                        <div class="about-card">
+                            <h5>Technology Stack</h5>
+                            <p>Python 3.10+, Flask, Werkzeug, Pillow, NumPy, piexif, HTML5 Canvas, Custom CSS3, Vanilla JavaScript</p>
+                        </div>
+                        <div class="about-card">
+                            <h5>Security Model</h5>
+                            <p>In-memory processing, unpredictable UUIDs, automatic temporary evidence expiration, zero external API dependencies</p>
+                        </div>
+                    </div>
+
+                    <div class="about-disclaimer">
+                        <strong>Academic & Evidentiary Statement:</strong>
+                        This software provides automated empirical and structural analyses for digital image investigations. All findings represent forensic indicators and should be evaluated in accordance with standard forensic best practices.
+                    </div>
+                </article>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="dismissAboutBtn">Close Window</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+    <!-- SCRIPTS -->
+    <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/upload.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/analysis.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

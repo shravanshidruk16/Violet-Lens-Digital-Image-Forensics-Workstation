@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forensic Examination Dossier — {{ report.examination.id[:8] }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/print.css') }}">
+</head>
+<body class="report-body">
+    <!-- NO-PRINT HEADER ACTIONS -->
+    <div class="report-action-header no-print">
+        <div class="report-header-inner">
+            <div class="report-header-left">
+                <a href="{{ url_for('index') }}" class="btn btn-outline btn-sm">
+                    &larr; Return to Workspace
+                </a>
+                <span class="report-badge">Formal Examination Dossier</span>
+            </div>
+            <div class="report-header-right">
+                <button type="button" class="btn btn-primary btn-sm" onclick="window.print()">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px; vertical-align: -2px;">
+                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                        <rect x="6" y="14" width="12" height="8"></rect>
+                    </svg>
+                    Print or Save as PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRINTABLE REPORT DOCUMENT CONTAINER -->
+    <div class="report-document">
+        
+        <!-- FORMAL REPORT HEADER -->
+        <header class="dossier-header">
+            <div class="dossier-header-top">
+                <div class="dossier-org">
+                    <h1 class="dossier-title">VIOLET LENS</h1>
+                    <div class="dossier-subtitle">Digital Image Forensics Workstation &bull; Examination Report</div>
+                    <div class="dossier-course">CSDF Mini-Project &bull; "Design and develop a tool for digital forensic of images"</div>
+                </div>
+                <div class="dossier-meta-box">
+                    <div class="meta-row"><strong>Examination ID:</strong> <span class="mono">{{ report.examination.id }}</span></div>
+                    <div class="meta-row"><strong>Generated (UTC):</strong> {{ report.examination.timestamp_utc }}</div>
+                    <div class="meta-row"><strong>Workstation:</strong> v{{ report.workstation.version }} (Local Offline Engine)</div>
+                    <div class="meta-row"><strong>Chain of Custody:</strong> VERIFIED BIT-LEVEL INTEGRITY</div>
+                </div>
+            </div>
+            <hr class="dossier-rule">
+        </header>
+
+        <!-- SECTION 1: EVIDENCE INTEGRITY -->
+        <section class="dossier-section">
+            <h2 class="dossier-sec-title">1. Evidence Ingestion & Cryptographic Integrity</h2>
+            <p class="dossier-p">
+                The cryptographic hash below was computed directly from the unaltered original uploaded byte sequence prior to any transcoding, rotation, or visual preprocessing.
+            </p>
+
+            <table class="dossier-table">
+                <tbody>
+                    <tr>
+                        <th style="width: 25%;">Submitted File Name</th>
+                        <td class="mono">{{ report.evidence_integrity.filename }}</td>
+                    </tr>
+                    <tr>
+                        <th>Original File Size</th>
+                        <td>{{ report.evidence_integrity.byte_size_formatted }} ({{ report.evidence_integrity.byte_size }} bytes)</td>
+                    </tr>
+                    <tr>
+                        <th>Cryptographic Digest (SHA-256)</th>
+                        <td class="mono highlight-mono">{{ report.evidence_integrity.sha256 }}</td>
+                    </tr>
+                    <tr>
+                        <th>Algorithm & Status</th>
+                        <td>SHA-256 (FIPS 180-4) &bull; Verified unaltered byte stream</td>
+                    </tr>
+                    <tr>
+                        <th>Header Magic Bytes</th>
+                        <td class="mono">{{ report.file_signature.magic_bytes_hex }}</td>
+                    </tr>
+                    <tr>
+                        <th>Signature / Extension Consistency</th>
+                        <td>
+                            <strong>{{ "CONSISTENT" if report.file_signature.is_consistent else "MISMATCH DETECTED" }}:</strong>
+                            {{ report.file_signature.details }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- SECTION 2: TECHNICAL SPECIFICATIONS -->
+        <section class="dossier-section">
+            <h2 class="dossier-sec-title">2. Image Structural Specifications</h2>
+            <table class="dossier-table">
+                <thead>
+                    <tr>
+                        <th>Attribute</th>
+                        <th>Observed Metric</th>
+                        <th>Forensic Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Pixel Dimensions</th>
+                        <td>{{ report.image_properties.dimensions }}</td>
+                        <td>Total resolution (Width &times; Height in raster pixels)</td>
+                    </tr>
+                    <tr>
+                        <th>Megapixel Count</th>
+                        <td>{{ report.image_properties.megapixels }} MP</td>
+                        <td>Effective sensor resolution</td>
+                    </tr>
+                    <tr>
+                        <th>Aspect Ratio</th>
+                        <td>{{ report.image_properties.aspect_ratio }}</td>
+                        <td>Geometric frame proportion</td>
+                    </tr>
+                    <tr>
+                        <th>Container Format</th>
+                        <td>{{ report.image_properties.detected_format }}</td>
+                        <td>Decoded file format specification</td>
+                    </tr>
+                    <tr>
+                        <th>Color Mode</th>
+                        <td>{{ report.image_properties.color_mode }}</td>
+                        <td>Raster pixel color space representation</td>
+                    </tr>
+                    <tr>
+                        <th>Channel Count</th>
+                        <td>{{ report.image_properties.channel_count }}</td>
+                        <td>Independent color/alpha channels</td>
+                    </tr>
+                    <tr>
+                        <th>Alpha Channel</th>
+                        <td>{{ "Present (Transparency Supported)" if report.image_properties.has_transparency else "Absent (Fully Opaque)" }}</td>
+                        <td>Indicates potential compositing or cutout layers</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- SECTION 3: VISUAL COMPARISON & ELA -->
+        <section class="dossier-section page-break">
+            <h2 class="dossier-sec-title">3. Visual Evidence & Error Level Analysis (ELA)</h2>
+            <div class="dossier-figures-grid">
+                <div class="dossier-fig">
+                    <div class="dossier-fig-label">Figure 3.1: Original Evidence Preview</div>
+                    <div class="dossier-fig-frame">
+                        {% if preview_uri %}
+                        <img src="{{ preview_uri }}" alt="Original Evidence">
+                        {% else %}
+                        <div class="fig-placeholder">Preview Not Available</div>
+                        {% endif %}
+                    </div>
+                    <div class="fig-caption">Direct rasterization of evidence bytes.</div>
+                </div>
+
+                <div class="dossier-fig">
+                    <div class="dossier-fig-label">Figure 3.2: Error Level Analysis (ELA) Visualization</div>
+                    <div class="dossier-fig-frame">
+                        {% if ela_uri and report.error_level_analysis.is_available %}
+                        <img src="{{ ela_uri }}" alt="Error Level Analysis">
+                        {% else %}
+                        <div class="fig-placeholder">
+                            <strong>ELA Not Applicable:</strong>
+                            {{ report.error_level_analysis.reason_if_unavailable or 'Source is not lossy JPEG.' }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="fig-caption">
+                        {% if report.error_level_analysis.is_available %}
+                        Resaved at Q={{ report.error_level_analysis.quality }} with {{ report.error_level_analysis.scale_factor }}&times; difference amplification.
+                        {% else %}
+                        Error Level Analysis is technically restricted to JPEG sources.
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            {% if report.error_level_analysis.is_available %}
+            <table class="dossier-table" style="margin-top: 1rem;">
+                <thead>
+                    <tr>
+                        <th>Mean Recompression Error</th>
+                        <th>Peak Absolute Error</th>
+                        <th>Error Standard Deviation</th>
+                        <th>High-Error Density (&gt;10 levels)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ report.error_level_analysis.mean_error }}</td>
+                        <td>{{ report.error_level_analysis.max_error }}</td>
+                        <td>{{ report.error_level_analysis.std_error }}</td>
+                        <td>{{ report.error_level_analysis.high_error_pixel_percentage }}%</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="dossier-note">
+                <strong>Scientific Context:</strong> {{ report.error_level_analysis.scientific_note }}
+            </p>
+            {% endif %}
+        </section>
+
+        <!-- SECTION 4: METADATA INSPECTION -->
+        <section class="dossier-section">
+            <h2 class="dossier-sec-title">4. EXIF & Metadata Inspection</h2>
+            {% if report.metadata_inspection.has_exif %}
+            <p class="dossier-p">
+                A total of {{ report.metadata_inspection.total_tags_found }} metadata tags were recovered and parsed from the evidence file.
+            </p>
+
+            <table class="dossier-table">
+                <tbody>
+                    <tr>
+                        <th style="width: 25%;">Camera Make & Model</th>
+                        <td>{{ report.metadata_inspection.camera_device.make or 'Unknown' }} &bull; {{ report.metadata_inspection.camera_device.model or 'Unknown' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Editing / Processing Software</th>
+                        <td>
+                            {% if report.metadata_inspection.camera_device.software %}
+                            <strong>{{ report.metadata_inspection.camera_device.software }}</strong>
+                            {% if report.metadata_inspection.camera_device.has_editing_software %}
+                            <span class="dossier-flag">(Known Image Manipulation Software)</span>
+                            {% endif %}
+                            {% else %}
+                            Not Recorded
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Capture Timestamps</th>
+                        <td>
+                            Original: <span class="mono">{{ report.metadata_inspection.timestamps.original or 'Not Present' }}</span> |
+                            Digitized: <span class="mono">{{ report.metadata_inspection.timestamps.digitized or 'Not Present' }}</span> |
+                            Modified: <span class="mono">{{ report.metadata_inspection.timestamps.modified or 'Not Present' }}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Optical Parameters</th>
+                        <td>
+                            Aperture: {{ report.metadata_inspection.optical_settings.f_number or 'N/A' }} |
+                            Shutter: {{ report.metadata_inspection.optical_settings.exposure_time or 'N/A' }} |
+                            ISO: {{ report.metadata_inspection.optical_settings.iso or 'N/A' }} |
+                            Focal Length: {{ report.metadata_inspection.optical_settings.focal_length or 'N/A' }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Geolocation (GPS)</th>
+                        <td>
+                            {% if report.metadata_inspection.location_summary.has_gps %}
+                            Coordinates: {{ report.metadata_inspection.location_summary.coordinates_formatted or 'Detected' }}
+                            {% if report.metadata_inspection.location_summary.altitude %}
+                            (Altitude: {{ report.metadata_inspection.location_summary.altitude }})
+                            {% endif %}
+                            {% else %}
+                            No GPS metadata embedded in file.
+                            {% endif %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            {% else %}
+            <div class="dossier-box">
+                <strong>No EXIF Metadata Found:</strong>
+                No EXIF segment was found in the byte stream. This is common when images are ingested from social networks, messaging platforms, or web services that strip metadata.
+            </div>
+            {% endif %}
+        </section>
+
+        <!-- SECTION 5: RADIOMETRIC PIXEL ANALYSIS -->
+        <section class="dossier-section">
+            <h2 class="dossier-sec-title">5. Radiometric Pixel & Color Distribution</h2>
+            <table class="dossier-table">
+                <thead>
+                    <tr>
+                        <th>Channel</th>
+                        <th>Mean</th>
+                        <th>Std Dev</th>
+                        <th>Min / Max</th>
+                        <th>Shadow Clip (&le;1)</th>
+                        <th>Highlight Clip (&ge;254)</th>
+                        <th>Entropy (bits/px)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ch_name, stats in report.pixel_and_color_analysis.channel_statistics.items() %}
+                    <tr>
+                        <td><strong>{{ ch_name|capitalize }}</strong></td>
+                        <td>{{ stats.mean }}</td>
+                        <td>{{ stats.std }}</td>
+                        <td>{{ stats.min }} / {{ stats.max }}</td>
+                        <td>{{ stats.shadow_clipping_pct }}%</td>
+                        <td>{{ stats.highlight_clipping_pct }}%</td>
+                        <td>{{ stats.entropy_bits }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <p class="dossier-note">
+                <strong>Total Pixels Evaluated:</strong> {{ report.pixel_and_color_analysis.summary.total_pixels }} &bull;
+                <strong>Luminance Entropy:</strong> {{ report.pixel_and_color_analysis.summary.shannon_entropy_bits }} bits (quantifies information richness and noise characteristics).
+            </p>
+        </section>
+
+        <!-- SECTION 6: FORENSIC OBSERVATIONS -->
+        <section class="dossier-section page-break">
+            <h2 class="dossier-sec-title">6. Deterministic Forensic Observations</h2>
+            <p class="dossier-p">
+                Observations synthesized automatically from executed physical, structural, and radiometric tests:
+            </p>
+
+            <div class="dossier-obs-list">
+                {% for obs in report.observations %}
+                <div class="dossier-obs-item obs-{{ obs.category }}">
+                    <div class="obs-tag tag-{{ obs.category }}">
+                        {{ obs.category|upper }}
+                    </div>
+                    <div class="obs-body">
+                        <strong class="obs-title">{{ obs.title }}</strong>
+                        <p class="obs-desc">{{ obs.description }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- SECTION 7: METHODOLOGY & LIMITATIONS -->
+        <section class="dossier-section">
+            <h2 class="dossier-sec-title">7. Methodology & Investigative Boundaries</h2>
+            <ul class="dossier-limits-list">
+                {% for lim in report.methodology_and_limitations %}
+                <li>{{ lim }}</li>
+                {% endfor %}
+            </ul>
+        </section>
+
+        <!-- SECTION 8: ATTESTATION / SIGNATURE -->
+        <footer class="dossier-attestation">
+            <div class="attestation-grid">
+                <div class="attestation-box">
+                    <div class="att-label">Automated System Attestation</div>
+                    <p class="att-text">
+                        Analysis conducted deterministically by Violet Lens Workstation v1.0.0. Cryptographic hash verifies the byte stream examined.
+                    </p>
+                    <div class="att-sig-line">System Verification Digest: {{ report.evidence_integrity.sha256[:20] }}...</div>
+                </div>
+                <div class="attestation-box">
+                    <div class="att-label">Investigator Sign-off</div>
+                    <div class="att-blank-line"></div>
+                    <div class="att-sub">Digital Forensics Examiner Signature & Date</div>
+                </div>
+            </div>
+        </footer>
+
+    </div><!-- /report-document -->
+</body>
+</html>

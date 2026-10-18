@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>400 Bad Request — Violet Lens</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body class="error-page">
+    <div class="error-card">
+        <div class="error-badge">Error 400</div>
+        <h1>Invalid Examination Request</h1>
+        <p class="error-desc">{{ error.description if error and error.description else 'The server could not process the examination request due to malformed payload or invalid parameters.' }}</p>
+        <div class="error-actions">
+            <a href="{{ url_for('index') }}" class="btn btn-primary">Return to Workspace</a>
+        </div>
+    </div>
+</body>
+</html>
